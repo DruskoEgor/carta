@@ -1,16 +1,17 @@
 import time
 import json
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, render_template, redirect, url_for, request
+from bs4 import BeautifulSoup  # добавлен импорт для BeautifulSoup
 
 app = Flask(__name__)
 
 # Путь к файлу, где хранятся данные
-DATA_FILE = 'C:/Users/stran/PycharmProjects/PythonProject5/data.json'
-#здесь обязательно нужно указать путь к data.json
+DATA_FILE = os.path.join(os.getcwd(), 'data.json')  # Используем текущую директорию
 
 # Список регионов в заданном порядке для электричества
 REGION_ORDER = [
@@ -40,11 +41,14 @@ REGION_ORDER = [
 
 # Загрузка данных из файла
 def load_data():
+    if not os.path.exists(DATA_FILE):
+        print(f"Файл {DATA_FILE} не существует.")
+        return []
     try:
         with open(DATA_FILE, 'r', encoding='utf-8') as file:
             return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        print("Не удалось загрузить данные из файла.")
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Ошибка загрузки данных: {e}")
         return []
 
 # Сохранение данных в файл
@@ -60,7 +64,6 @@ def save_data(data):
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-#обязательно нужно зарегистрироваться на сайте и ввести логин и пароль сюда чтобы все заработало
     driver = webdriver.Chrome()
 
     latest_prices = {region['id']: region for region in existing_data}
