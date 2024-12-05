@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup  # добавлен импорт для BeautifulSoup
+from webdriver_manager.chrome import ChromeDriverManager  # для автоматической установки драйвера
 
 app = Flask(__name__)
 
@@ -64,7 +65,9 @@ def save_data(data):
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-    driver = webdriver.Chrome()
+    
+    # Использование webdriver_manager для автоматической загрузки нужного драйвера
+    driver = webdriver.Chrome(ChromeDriverManager().install())
 
     latest_prices = {region['id']: region for region in existing_data}
 
@@ -140,9 +143,9 @@ def fetch_electric_data():
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    service = webdriver.chrome.service.Service()
-
-    driver = webdriver.Chrome(service=service, options=options)
+    
+    # Использование webdriver_manager для автоматической загрузки нужного драйвера
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     url = 'https://time2save.ru/tarify-na-elektroenergiu-dla-malih-predpriyatiy-i-ip'
 
     try:
