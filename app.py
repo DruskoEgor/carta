@@ -12,13 +12,13 @@ print("Current working directory:", os.getcwd())
 print("Templates folder exists:", os.path.exists('templates'))
 print("index.html exists:", os.path.exists('templates/index.html'))
 print(os.path.isfile('templates/index.html'))  # Должно вернуть True
-print("Registered routes:")
-for rule in app.url_map.iter_rules():
-    print(rule)
 
 
 app = Flask(__name__, template_folder='templates/index.html')
 
+print("Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(rule)
 # Путь к файлу, где хранятся данные
 DATA_FILE = os.path.join(os.getcwd(), '/opt/render/project/src/data.json')  # Используем текущую директорию
 
