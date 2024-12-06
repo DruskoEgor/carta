@@ -23,7 +23,6 @@ jobs:
         sudo python -m pip install --upgrade pip
         sudo pip install -r requirements.txt
         sudo pip install --upgrade selenium webdriver-manager
-        sudo apt update
         sudo apt install -y google-chrome-stable
         sudo rm -rf ~/.wdm
         sudo apt-get update && apt-get install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
