@@ -25,6 +25,8 @@ jobs:
         pip install --upgrade selenium webdriver-manager
         sudo apt update
         sudo apt install -y google-chrome-stable
+        rm -rf ~/.wdm
+        apt-get update && apt-get install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
         google-chrome --version
 
 
