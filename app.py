@@ -9,6 +9,7 @@ from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 # Проверка текущего рабочего каталога и файлов шаблонов
 print("Current working directory:", os.getcwd())
@@ -113,7 +114,11 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-    # Установка сервиса с помощью ChromeDriverManager
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Без графического интерфейса
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    #Установка сервиса с помощью ChromeDriverManager
     service = Service(ChromeDriverManager().install())
     
     # Инициализация драйвера
