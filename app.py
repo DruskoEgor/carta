@@ -127,6 +127,11 @@ def get_latest_data(existing_data):
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    print("Chromedriver initialized successfully")
+except Exception as e:
+    print("Error initializing Chromedriver:", e)
+    
         driver.get("https://www.benzin-price.ru/account.php")
         username_field = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='login']"))
