@@ -32,7 +32,6 @@ jobs:
         sudo rm /var/lib/apt/lists/lock
         sudo rm /var/cache/apt/pkgcache.bin
         sudo rm /var/cache/apt/srcpkgcache.bin
-        sudo apt-get update
         sudo chmod -R 755 /var/lib/apt/lists/
 
 
