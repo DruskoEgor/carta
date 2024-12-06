@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 # Проверка текущего рабочего каталога и файлов шаблонов
 print("Current working directory:", os.getcwd())
