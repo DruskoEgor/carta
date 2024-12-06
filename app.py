@@ -114,7 +114,9 @@ def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
 #обязательно нужно зарегистрироваться на сайте и ввести логин и пароль сюда чтобы все заработало
-    driver = webdriver.Chrome()
+    service = webdriver.chrome.service.Service()
+
+    driver = webdriver.Chrome(service=service, options=options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
