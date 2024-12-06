@@ -45,8 +45,10 @@ jobs:
         # 5. Проверяем, что Google Chrome установлен
         google-chrome --version
         which google-chrome-stable
+        sudo chmod +x /usr/bin/google-chrome-stable
+        uname -m
+        export PATH=$PATH:/usr/bin
 
-        
         # 6. Проверяем доступность и содержимое директории /var/lib/apt/lists/
         ls -l /var/lib/apt/lists/
         
