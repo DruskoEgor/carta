@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup  # добавлен импорт для BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager  # для автоматической установки драйвера
-import os 
 print(os.getcwd())
 
 app = Flask(__name__, template_folder='index.html')
