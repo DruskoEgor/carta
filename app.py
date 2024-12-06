@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup  # добавлен импорт для BeautifulS
 from webdriver_manager.chrome import ChromeDriverManager  # для автоматической установки драйвера
 print(os.getcwd())
 
-app = Flask(__name__, template_folder='/opt/render/project/src/tempalates/index.html')
+app = Flask(__main__, template_folder='index.html')
 
 # Путь к файлу, где хранятся данные
 DATA_FILE = os.path.join(os.getcwd(), '/opt/render/project/src/data.json')  # Используем текущую директорию
