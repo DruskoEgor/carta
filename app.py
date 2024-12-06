@@ -12,6 +12,10 @@ print("Current working directory:", os.getcwd())
 print("Templates folder exists:", os.path.exists('templates'))
 print("index.html exists:", os.path.exists('templates/index.html'))
 print(os.path.isfile('templates/index.html'))  # Должно вернуть True
+print("Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(rule)
+
 
 app = Flask(__name__, template_folder='templates/index.html')
 
@@ -217,4 +221,25 @@ def index():
         return render_template('index.html', data=[])
     except Exception as e:
         return f"Ошибка: {e}", 500
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/')
+def index():  # Повторное определение
+    return 'This is a duplicate'
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/about')
+def index():  # Здесь ошибка: повторное имя функции "index"
+    return 'About Page'
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return 'About Page'
 
