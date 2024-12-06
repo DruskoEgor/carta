@@ -114,9 +114,14 @@ def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
 #обязательно нужно зарегистрироваться на сайте и ввести логин и пароль сюда чтобы все заработало
-    service = webdriver.chrome.service.Service()
-
-    driver = webdriver.Chrome(service=service, options=options)
+    # Указываем явный путь к бинарному файлу Chrome
+    chrome_options.binary_location = '/usr/bin/google-chrome-stable'
+    
+    # Установка сервиса с помощью ChromeDriverManager
+    service = Service(ChromeDriverManager().install())
+    
+    # Инициализация драйвера
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
@@ -188,9 +193,14 @@ def get_latest_data(existing_data):
 
 # Функция для получения данных по электричеству
 def fetch_electric_data():
-    service = webdriver.chrome.service.Service()
-
-    driver = webdriver.Chrome(service=service, options=options)
+    # Указываем явный путь к бинарному файлу Chrome
+    chrome_options.binary_location = '/usr/bin/google-chrome-stable'
+    
+    # Установка сервиса с помощью ChromeDriverManager
+    service = Service(ChromeDriverManager().install())
+    
+    # Инициализация драйвера
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     url = 'https://time2save.ru/tarify-na-elektroenergiu-dla-malih-predpriyatiy-i-ip'
 
     try:
