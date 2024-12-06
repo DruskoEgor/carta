@@ -112,8 +112,16 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
+        chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Убирает графический интерфейс (удобно для серверов)
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    # Установка сервиса с помощью ChromeDriverManager
+    service = Service(ChromeDriverManager().install())
+    
+    # Инициализация драйвера
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
