@@ -242,4 +242,3 @@ def index():
 @app.route('/about')
 def about():
     return 'About Page'
-
