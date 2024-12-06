@@ -31,7 +31,7 @@ jobs:
         
         # 4. Устанавливаем Google Chrome и необходимые библиотеки
         sudo apt update
-        sudo apt install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
+        sudo apt install -y google-chrome-stable
         
         # 5. Проверяем, что Google Chrome установлен
         google-chrome --version
