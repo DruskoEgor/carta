@@ -114,19 +114,16 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-    # Создание объекта для настроек Chrome
     chrome_options = Options()
+
+    # Убедитесь, что путь к исполняемому файлу корректен
+    chrome_options.binary_location = '/usr/bin/chromium-browser'  # или /usr/bin/chromium-browser
     
-    # Устанавливаем путь к исполняемому файлу Chrome
-    chrome_options.binary_location = '/usr/bin/google-chrome-stable'
     
-    # Установка сервиса с помощью ChromeDriverManager
+    
     service = Service(ChromeDriverManager().install())
     
-    # Инициализация драйвера
     driver = webdriver.Chrome(service=service, options=chrome_options)
-
-
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
