@@ -55,6 +55,8 @@ jobs:
         
         # 8. Даем права на каталоги для apt
         sudo chmod -R 755 /var/lib/apt/lists/
+        sudo apt upgrade
+
 
 
 
