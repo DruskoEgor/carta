@@ -20,14 +20,23 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install --upgrade selenium webdriver-manager
+        sudo python -m pip install --upgrade pip
+        sudo pip install -r requirements.txt
+        sudo pip install --upgrade selenium webdriver-manager
         sudo apt update
         sudo apt install -y google-chrome-stable
-        rm -rf ~/.wdm
-        apt-get update && apt-get install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
-        google-chrome --version
+        sudo rm -rf ~/.wdm
+        sudo apt-get update && apt-get install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
+        sudo google-chrome --version
+        ls -l /var/lib/apt/lists/
+        sudo rm /var/lib/apt/lists/lock
+        sudo rm /var/cache/apt/pkgcache.bin
+        sudo rm /var/cache/apt/srcpkgcache.bin
+        sudo apt-get update
+        sudo chmod -R 755 /var/lib/apt/lists/
+
+
+
 
 
 
