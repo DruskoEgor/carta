@@ -8,9 +8,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup  # добавлен импорт для BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager  # для автоматической установки драйвера
-print(os.getcwd())
+print("Current working directory:", os.getcwd())
+print("Templates folder exists:", os.path.exists('templates'))
+print("index.html exists:", os.path.exists('templates/index.html'))
+print(os.path.isfile('templates/index.html'))  # Должно вернуть True
 
-app = Flask(__name__, template_folder='index.html')
+app = Flask(__name__, template_folder='templates/index.html')
 
 # Путь к файлу, где хранятся данные
 DATA_FILE = os.path.join(os.getcwd(), '/opt/render/project/src/data.json')  # Используем текущую директорию
@@ -208,3 +211,10 @@ def update_electric_data():
 
 if __name__ == '__main__':
     app.run(debug=True)
+@app.route('/')
+def index():
+    try:
+        return render_template('index.html', data=[])
+    except Exception as e:
+        return f"Ошибка: {e}", 500
+
