@@ -114,10 +114,7 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Без графического интерфейса
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
+
 
     chrome_options.binary_location = '/usr/bin/google-chrome-stable'
     
