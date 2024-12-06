@@ -110,22 +110,28 @@ def update_electric_data():
 def about():
     return 'About Page'
 
+# Функция для получения данных с сайта
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-#обязательно нужно зарегистрироваться на сайте и ввести логин и пароль сюда чтобы все заработало
-    # Указываем явный путь к бинарному файлу Chrome
+
     chrome_options.binary_location = '/usr/bin/google-chrome-stable'
-    
-    # Установка сервиса с помощью ChromeDriverManager
+
+    #Установка сервиса с помощью ChromeDriverManager
     service = Service(ChromeDriverManager().install())
-    
+    print("Chrome path:", chrome_options.binary_location)
+
     # Инициализация драйвера
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        print("Chromedriver initialized successfully")
+    except Exception as e:
+        print("Error initializing Chromedriver:", e)
+
         driver.get("https://www.benzin-price.ru/account.php")
         username_field = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='login']"))
@@ -186,40 +192,6 @@ def get_latest_data(existing_data):
                     }
     except Exception as e:
         print(f"Ошибка при авторизации или соединении: {e}")
-    finally:
-        driver.quit()
-
-    return list(latest_prices.values())
-
-# Функция для получения данных по электричеству
-def fetch_electric_data():
-    # Указываем явный путь к бинарному файлу Chrome
-    chrome_options.binary_location = '/usr/bin/google-chrome-stable'
-    
-    # Установка сервиса с помощью ChromeDriverManager
-    service = Service(ChromeDriverManager().install())
-    
-    # Инициализация драйвера
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    url = 'https://time2save.ru/tarify-na-elektroenergiu-dla-malih-predpriyatiy-i-ip'
-
-    try:
-        driver.get(url)
-        time.sleep(20)
-        table = driver.find_element(By.CLASS_NAME, 'table_title')
-        rows = table.find_elements(By.TAG_NAME, 'tr')
-
-        data = {}
-        for row in rows[2:]:
-            cells = row.find_elements(By.TAG_NAME, 'td')
-            if len(cells) > 0:
-                region = cells[0].text.strip()
-                price = float(cells[-2].text.strip().replace(',', '.'))
-                data[region] = round(price, 2)
-        return data
-    except Exception as e:
-        print("Ошибка при парсинге электричества:", e)
-        return {}
     finally:
         driver.quit()
 
