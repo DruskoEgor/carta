@@ -3,5 +3,4 @@ beautifulsoup4==4.11.1
 Flask==2.3.3
 gunicorn==23.0.0
 Jinja2==3.1.2
-requests==2.28.1  # если делаете HTTP-запросы
 webdriver-manager==3.8.5
