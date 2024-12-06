@@ -20,34 +20,31 @@ jobs:
 
     - name: Install dependencies
       run: |
-        # 1. Обновим pip до последней версии
+        # 1. Обновляем pip до последней версии
         sudo python3 -m pip install --upgrade pip
         
         # 2. Устанавливаем все зависимости из файла requirements.txt
         sudo pip install -r requirements.txt
         
-        # 3. Принудительно переустанавливаем пакет blinker (если необходимо)
-        sudo pip install --force-reinstall blinker
-        
-        # 4. Обновляем selenium и webdriver-manager
+        # 3. Обновляем selenium и webdriver-manager
         sudo pip install --upgrade selenium webdriver-manager
         
-        # 5. Устанавливаем Google Chrome и необходимые библиотеки
+        # 4. Устанавливаем Google Chrome и необходимые библиотеки
         sudo apt update
         sudo apt install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
         
-        # 6. Проверяем, что Google Chrome установлен
+        # 5. Проверяем, что Google Chrome установлен
         google-chrome --version
         
-        # 7. Проверяем доступность и содержимое директории /var/lib/apt/lists/
+        # 6. Проверяем доступность и содержимое директории /var/lib/apt/lists/
         ls -l /var/lib/apt/lists/
         
-        # 8. Удаляем блокировки APT (если они возникли)
+        # 7. Удаляем блокировки APT (если они возникли)
         sudo rm /var/lib/apt/lists/lock
         sudo rm /var/cache/apt/pkgcache.bin
         sudo rm /var/cache/apt/srcpkgcache.bin
         
-        # 9. Даем права на каталоги для apt
+        # 8. Даем права на каталоги для apt
         sudo chmod -R 755 /var/lib/apt/lists/
 
 
