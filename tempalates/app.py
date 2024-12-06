@@ -9,7 +9,7 @@ from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup  # добавлен импорт для BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager  # для автоматической установки драйвера
 
-app = Flask(__name__, template_folder='carta/tempalates/index.html')
+app = Flask(__name__, template_folder='index.html')
 
 # Путь к файлу, где хранятся данные
 DATA_FILE = os.path.join(os.getcwd(), 'data.json')  # Используем текущую директорию
