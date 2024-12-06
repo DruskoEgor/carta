@@ -123,7 +123,8 @@ def get_latest_data(existing_data):
     
     #Установка сервиса с помощью ChromeDriverManager
     service = Service(ChromeDriverManager().install())
-    
+    print("Chrome path:", chrome_options.binary_location)
+
     # Инициализация драйвера
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
