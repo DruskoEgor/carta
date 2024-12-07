@@ -39,7 +39,7 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com
 
 # Устанавливаем Python-зависимости
 RUN pip install selenium
-
+RUN pip install flask
 # Копируем ваш код
 COPY . /app
 WORKDIR /app
