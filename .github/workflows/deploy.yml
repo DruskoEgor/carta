@@ -14,8 +14,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Скачиваем и собираем Chromium из исходников
-    - name: Download and build Chromium from source
+    # 2. Скачиваем и устанавливаем Chromium и ChromeDriver
+    - name: Install Chromium and set up ChromeDriver
       run: |
         sudo apt-get update
         sudo apt-get install -y wget unzip build-essential python3-dev \
@@ -24,51 +24,30 @@ jobs:
           libatk1.0-dev libcups2-dev libasound2-dev \
           libdbus-1-dev libxtst-dev
 
-        # Скачиваем архив с исходным кодом Chromium
-        wget https://chromium.googlesource.com/chromium/src/+archive/refs/tags/131.0.6778.85.tar.gz -O chromium-src.tar.gz
+        # Скачиваем и устанавливаем Chromium из правильного пакета
+        wget https://pkg.freebsd.org/FreeBSD:13:amd64/latest/All/linux-chrome-131.0.6778.85.pkg -O chromium-linux-package.pkg
+        sudo apt-get install -y chromium-browser
 
-        # Распаковываем архив
-        tar -xvzf chromium-src.tar.gz
-        cd src
-
-        # Устанавливаем необходимые зависимости для сборки Chromium
-        ./build/install-build-deps.sh
-
-        # Сборка Chromium (можно указать конкретный профиль сборки, чтобы ускорить процесс)
-        ./build/gyp_chromium
-        make -j$(nproc) chromium
-
-        # Сохраняем собранный Chromium
-        sudo cp out/Release/chrome /usr/bin/chromium-browser
-
-    # 3. Загружаем и устанавливаем ChromeDriver
-    - name: Install ChromeDriver
-      run: |
-        # Устанавливаем версию Chromium
-        CHROMIUM_VERSION=$(chromium-browser --version | awk '{print $2}' | cut -d'.' -f1,2)
-        echo "Chromium version: $CHROMIUM_VERSION"
-
-        # Загружаем нужную версию ChromeDriver для соответствующей версии Chromium
-        CHROMEDRIVER_VERSION="131.0.6778.85"
-        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
+        # Устанавливаем ChromeDriver для версии 131.0.6778.85
+        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/linux64/chromedriver-linux64.zip"
         wget $CHROMEDRIVER_URL -O chromedriver-linux64.zip
 
-        # Распаковываем архив с ChromeDriver
+        # Распаковываем архив
         unzip chromedriver-linux64.zip -d chromedriver-linux64
 
         # Перемещаем файл chromedriver в /usr/local/bin
         sudo mv chromedriver-linux64/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
 
-        # Проверяем установленную версию ChromeDriver
+        # Проверяем версию ChromeDriver
         chromedriver --version
 
-    # 4. Устанавливаем Python
+    # 3. Устанавливаем Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 5. Устанавливаем зависимости Python
+    # 4. Устанавливаем зависимости Python
     - name: Install Python dependencies
       run: |
         python -m venv venv
@@ -76,7 +55,7 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 6. Тестируем Selenium в headless режиме
+    # 5. Тестируем Selenium в headless режиме
     - name: Test Selenium in headless mode
       run: |
         source venv/bin/activate
