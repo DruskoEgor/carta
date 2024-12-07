@@ -94,9 +94,7 @@ def get_latest_data(existing_data):
     # Настройки для Chrome
     chrome_options = Options()
     chrome_options.binary_location = chrome_binary_path
-    chrome_options.add_argument("--headless")  # Запуск в headless режиме
-    chrome_options.add_argument("--no-sandbox")  # Без песочницы
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
+  
 
     # Создаем сервис с использованием локального пути к chromedriver
     service = Service(executable_path=chrome_driver_path)
