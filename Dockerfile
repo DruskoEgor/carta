@@ -43,6 +43,12 @@ RUN pip install selenium
 # Копируем ваш код
 COPY . /app
 WORKDIR /app
+RUN which google-chrome
+RUN google-chrome --version
+RUN which chromedriver
+RUN chromedriver --version
+ENV PATH="/usr/bin:$PATH"
+
 
 # Указываем команду для запуска приложения
 CMD ["python", "app.py"]
