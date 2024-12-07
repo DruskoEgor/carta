@@ -38,29 +38,11 @@ jobs:
         # 3. Обновляем selenium и webdriver-manager
         sudo pip install --upgrade selenium webdriver-manager
         
-        # 4. Устанавливаем Google Chrome и необходимые библиотеки
-        sudo apt update
-        sudo apt install -y google-chrome-stable libx11-xcb1 libnss3 libasound2
-        sudo apt install chromium-browser
+        # Указываем путь к chromedriver для Linux/WSL
+        CHROMEDRIVER_PATH="/mnt/c/chromedriver/chromedriver.exe"
 
-        # 5. Проверяем, что Google Chrome установлен
-        google-chrome --version
-        which google-chrome-stable
-        sudo chmod +x /usr/bin/google-chrome-stable
-        uname -m
-        export PATH=$PATH:/usr/bin
+        app.py --chromedriver_path="$CHROMEDRIVER_PATH"
 
-        # 6. Проверяем доступность и содержимое директории /var/lib/apt/lists/
-        ls -l /var/lib/apt/lists/
-        
-        # 7. Удаляем блокировки APT (если они возникли)
-        sudo rm /var/lib/apt/lists/lock
-        sudo rm /var/cache/apt/pkgcache.bin
-        sudo rm /var/cache/apt/srcpkgcache.bin
-        
-        # 8. Даем права на каталоги для apt
-        sudo chmod -R 755 /var/lib/apt/lists/
-        sudo apt upgrade
 
 
 
