@@ -72,7 +72,7 @@ jobs:
         options.add_argument('--disable-dev-shm-usage');
         options.add_argument('--remote-debugging-port=9222');  # Устанавливаем порт для DevTools
         options.add_argument('--disable-software-rasterizer');  # Отключаем использование софтварного рендеринга
-    
+
         service = Service('/usr/local/bin/chromedriver');
         driver = webdriver.Chrome(service=service, options=options);
         
@@ -81,3 +81,13 @@ jobs:
         print('Page title is:', driver.title);
         driver.quit();
         "
+
+        chromium-browser --version
+        chromedriver --version
+        which chromium-browsersudo chmod +x /usr/local/bin/chromedriver
+        pip install webdriver-manager
+
+
+
+
+
