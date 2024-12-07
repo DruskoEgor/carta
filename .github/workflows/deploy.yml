@@ -41,7 +41,7 @@ jobs:
         # Указываем путь к chromedriver для Linux/WSL
         CHROMEDRIVER_PATH="/mnt/c/chromedriver/chromedriver.exe"
 
-        app.py --chromedriver_path="$CHROMEDRIVER_PATH"
+      
 
 
 
