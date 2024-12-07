@@ -14,7 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем Chromium из Snap или репозиториев
+    # 2. Устанавливаем Chromium и ChromeDriver
     - name: Install Chromium and ChromeDriver
       run: |
         sudo apt-get update -y
@@ -23,7 +23,7 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y chromium-browser
 
-        # Установка ChromeDriver
+        # Устанавливаем ChromeDriver
         CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
         wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp
         sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
@@ -43,8 +43,8 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 5. Тестируем Selenium (опционально)
-    - name: Test Selenium
+    # 5. Тестируем Selenium
+    - name: Test Selenium in headless mode
       run: |
         source venv/bin/activate
         python -c "
@@ -53,10 +53,14 @@ jobs:
         from selenium.webdriver.chrome.options import Options;
         options = Options();
         options.binary_location = '/usr/bin/chromium-browser';
+        options.add_argument('--headless'); # Запуск в headless режиме
+        options.add_argument('--disable-gpu');
+        options.add_argument('--no-sandbox');
+        options.add_argument('--disable-dev-shm-usage');
         service = Service(executable_path='/usr/local/bin/chromedriver');
         driver = webdriver.Chrome(service=service, options=options);
         driver.get('https://www.google.com');
-        print(driver.title);
+        print('Page title is:', driver.title);
         driver.quit();
                 "
 
