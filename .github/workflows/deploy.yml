@@ -1,0 +1,63 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main  # Запускаем workflow при пуше в основную ветку
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Клонируем репозиторий
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Устанавливаем Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # 3. Устанавливаем зависимости системы
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y wget curl unzip chromium
+
+    # 4. Устанавливаем ChromeDriver
+    - name: Install ChromeDriver
+      run: |
+        CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp
+        sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+        rm /tmp/chromedriver_linux64.zip
+
+    # 5. Устанавливаем зависимости Python
+    - name: Install Python dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # 6. Тестируем Selenium (опционально)
+    - name: Test Selenium
+      run: |
+        source venv/bin/activate
+        python -c "
+        from selenium import webdriver;
+        from selenium.webdriver.chrome.service import Service;
+        from selenium.webdriver.chrome.options import Options;
+        options = Options();
+        options.binary_location = '/usr/bin/chromium';
+        service = Service(executable_path='/usr/local/bin/chromedriver');
+        driver = webdriver.Chrome(service=service, options=options);
+        driver.get('https://www.google.com');
+        print(driver.title);
+        driver.quit();
+                "
+
+
