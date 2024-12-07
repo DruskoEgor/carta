@@ -114,21 +114,21 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-    # Укажите путь к вашему локальному ChromeDriver
-    chromedriver_path = "C:\\chromedriver\\chromedriver.exe"  # Ваш путь к chromedriver
+  
+    # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
+    chrome_driver_path = '/usr/local/bin/chromedriver'
+    chrome_binary_path = '/usr/bin/chromium'
     
-    # Создаем объект опций Chrome
+    # Настройки для Chrome
     chrome_options = Options()
+    chrome_options.binary_location = chrome_binary_path
     
-    # Укажите путь к бинарному файлу Chrome
-    chrome_options.binary_location = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Путь к вашему Chrome
+    # Создаем сервис с использованием локального пути к chromedriver
+    service = Service(executable_path=chrome_driver_path)
     
-    # Устанавливаем сервис для chromedriver
-    service = Service(executable_path=chromedriver_path)
-    
-    # Запускаем Chrome
+    # Запуск WebDriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
-    
+
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
