@@ -84,3 +84,4 @@ jobs:
         "
         which chromium-browser
         which chromedriver
+        run app.py
