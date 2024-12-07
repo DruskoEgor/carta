@@ -14,18 +14,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем Chromium и ChromeDriver
-    - name: Install Chromium and ChromeDriver
+    # 2. Устанавливаем Chromium и соответствующий ChromeDriver
+    - name: Install Chromium and matching ChromeDriver
       run: |
-        sudo apt-get update -y
-        sudo apt-get install -y software-properties-common
-        sudo add-apt-repository -y ppa:saiarcot895/chromium-beta
+        # Устанавливаем Chromium
         sudo apt-get update -y
         sudo apt-get install -y chromium-browser
 
-        # Устанавливаем ChromeDriver
-        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-        wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp
+        # Получаем текущую версию Chromium
+        CHROMIUM_VERSION=$(chromium-browser --version | grep -oP '\d+\.\d+\.\d+')
+
+        # Загружаем соответствующую версию ChromeDriver
+        DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMIUM_VERSION%%.*})
+        wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip -P /tmp
         sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
 
@@ -63,5 +64,3 @@ jobs:
         print('Page title is:', driver.title);
         driver.quit();
                 "
-
-
