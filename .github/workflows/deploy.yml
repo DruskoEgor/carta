@@ -14,24 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем конкретную версию Chromium и ChromeDriver
-    - name: Install Chromium and ChromeDriver
+    # 2. Устанавливаем Chromium и перемещаем ChromeDriver
+    - name: Install Chromium and set up ChromeDriver
       run: |
-        # Устанавливаем фиксированную версию Chromium (108)
         sudo apt-get update
         sudo apt-get install -y wget unzip
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb
-        sudo apt install -y /tmp/chrome.deb
 
-        # Устанавливаем соответствующий ChromeDriver
-        CHROMIUM_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
-        echo "Using Chromium version: $CHROMIUM_VERSION"
-        
-        # Устанавливаем нужную версию ChromeDriver
-        DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_108)
-        wget -q "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip" -P /tmp
-        sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
+        # Устанавливаем Chromium
+        sudo apt-get install -y chromium-browser
+
+        # Перемещаем предоставленный ChromeDriver
+        mv /mnt/c:/chromedriver/chromedriver.exe /usr/local/bin/chromedriver
+        chmod +x /usr/local/bin/chromedriver
 
     # 3. Устанавливаем Python
     - name: Set up Python
@@ -47,7 +41,7 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 5. Тестируем Selenium
+    # 5. Тестируем Selenium в headless режиме
     - name: Test Selenium in headless mode
       run: |
         source venv/bin/activate
@@ -56,7 +50,7 @@ jobs:
         from selenium.webdriver.chrome.service import Service;
         from selenium.webdriver.chrome.options import Options;
         options = Options();
-        options.binary_location = '/usr/bin/google-chrome';
+        options.binary_location = '/usr/bin/chromium-browser';
         options.add_argument('--headless');
         options.add_argument('--no-sandbox');
         options.add_argument('--disable-dev-shm-usage');
@@ -66,5 +60,3 @@ jobs:
         print('Page title is:', driver.title);
         driver.quit();
                 "
-        
-        
