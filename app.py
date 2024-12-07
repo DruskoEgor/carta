@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Путь к файлу данных
 DATA_FILE = os.path.join(os.getcwd(), 'data.json')
 
-# Список регионов (для справки)
+# Список регионов
 REGION_ORDER = [
     "Белгородская область", "Брянская область", "Владимирская область", "Воронежская область",
     "Ивановская область", "Калужская область", "Костромская область", "Курская область",
@@ -40,6 +40,7 @@ REGION_ORDER = [
     "Хабаровский край", "Амурская область", "Магаданская область", "Сахалинская область",
     "Еврейская автономная область", "Чукотский автономный округ", "Республика Крым"
 ]
+
 
 # Загрузка данных из файла
 def load_data():
@@ -105,12 +106,15 @@ def get_latest_data(existing_data):
     password = 'lei777dark'
 
     # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
-    chrome_driver_path = '/usr/local/bin/chromedriver'  # Убедитесь, что путь правильный
-    chrome_binary_path = '/usr/bin/chromium-browser'  # Убедитесь, что путь правильный
+    chrome_driver_path = '/usr/local/bin/chromedriver'  # Путь к ChromeDriver
+    chrome_binary_path = '/usr/bin/chromium-browser'  # Путь к Chromium
 
     chrome_options = Options()
     chrome_options.binary_location = chrome_binary_path
     chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
+    chrome_options.add_argument("--headless")  # Режим без интерфейса
+    chrome_options.add_argument("--no-sandbox")  # Для повышения безопасности
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Для отладки
 
     service = Service(executable_path=chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
