@@ -107,10 +107,15 @@ chrome_binary_path = '/usr/bin/chromium-browser'
 
 chrome_options = Options()
 chrome_options.binary_location = chrome_binary_path
-chrome_options.add_argument("--disable-dev-shm-usage")  # Избегать проблем с памятью
-chrome_options.add_argument("--headless")  # Режим без интерфейса
-chrome_options.add_argument("--no-sandbox")  # Уменьшение изоляции (для контейнеров)
-chrome_options.add_argument("--remote-debugging-port=9222")  # Для отладки
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--single-process")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--disable-background-networking")
+chrome_options.add_argument("--blink-settings=imagesEnabled=false")
+chrome_options.add_argument("--window-size=800x600")  # Минимизация окна
 
 service = Service(executable_path=chrome_driver_path)
 
@@ -121,6 +126,7 @@ def start_driver_with_retries(retries=3, delay=5):
         try:
             logging.info(f"Попытка запуска ChromeDriver: {attempt + 1}/{retries}")
             driver = webdriver.Chrome(service=service, options=chrome_options)
+            WebDriverWait(driver, 20)  # Не увеличивайте тайм-ауты без необходимости
             logging.info("ChromeDriver успешно запущен")
             return driver
         except WebDriverException as e:
