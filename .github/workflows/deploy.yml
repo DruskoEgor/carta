@@ -16,11 +16,11 @@ jobs:
     
     # 2. Устанавливаем Chromium и настраиваем ChromeDriver
     - name: Install Chromium and set up ChromeDriver
-    run: |
+      run: |
         sudo apt-get update
         sudo apt-get install -y wget unzip
         # Устанавливаем Chromium
-          sudo apt-get install -y chromium-browser
+        sudo apt-get install -y chromium-browser
         # Получаем версию установленного Chromium
         CHROMIUM_VERSION=$(chromium-browser --version | awk '{print $2}' | cut -d'.' -f1,2)
         echo "Installing ChromeDriver for Chromium version: $CHROMIUM_VERSION"
@@ -33,8 +33,6 @@ jobs:
         sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
         # Проверяем версию ChromeDriver
         chromedriver --version
-
-    
     # 3. Устанавливаем Python
     - name: Set up Python
       uses: actions/setup-python@v4
