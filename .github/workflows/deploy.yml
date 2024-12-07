@@ -1,9 +1,9 @@
-name: Deploy to Render
+name: Deploy to Render (Linux Server)
 
 on:
   push:
     branches:
-      - main  # Запускаем workflow при пуше в основную ветку
+      - main
 
 jobs:
   deploy:
@@ -14,28 +14,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем Python
+    # 2. Устанавливаем зависимости системы
+    - name: Install Chromium and ChromeDriver
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y wget curl unzip chromium
+        CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp
+        sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+
+    # 3. Устанавливаем Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 3. Устанавливаем зависимости системы
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y wget curl unzip chromium
-
-    # 4. Устанавливаем ChromeDriver
-    - name: Install ChromeDriver
-      run: |
-        CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
-        wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip -P /tmp
-        sudo unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
-        rm /tmp/chromedriver_linux64.zip
-
-    # 5. Устанавливаем зависимости Python
+    # 4. Устанавливаем зависимости Python
     - name: Install Python dependencies
       run: |
         python -m venv venv
@@ -43,7 +38,7 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 6. Тестируем Selenium (опционально)
+    # 5. Тестируем Selenium (опционально)
     - name: Test Selenium
       run: |
         source venv/bin/activate
