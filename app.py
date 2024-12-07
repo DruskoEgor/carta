@@ -1,25 +1,19 @@
 import time
 import json
 import os
+from flask import Flask, render_template, redirect, url_for
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from flask import Flask, render_template, redirect, url_for, request
 from bs4 import BeautifulSoup
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 
-# Проверка текущего рабочего каталога и файлов шаблонов
-print("Current working directory:", os.getcwd())
-print("Templates folder exists:", os.path.exists('templates'))
-print("index.html exists:", os.path.exists('templates/index.html'))
-
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__)
 
 # Путь к файлу данных
-DATA_FILE = os.path.join(os.getcwd(), '/opt/render/project/src/data.json')
+DATA_FILE = os.path.join(os.getcwd(), 'data.json')
 
 # Список регионов (для справки, не используется прямо сейчас)
 REGION_ORDER = [
@@ -83,28 +77,6 @@ def update_data():
         save_data(new_data)
     return redirect(url_for('home'))
 
-# Обновление данных по электричеству
-@app.route('/update_electric_data', methods=['POST'])
-def update_electric_data():
-    electric_data = fetch_electric_data()
-    data = load_data()
-
-    updated_data = []
-    for existing_entry in data:
-        region = existing_entry.get("region")
-        if not region:
-            continue
-
-        new_electric_price = electric_data.get(region)
-
-        if new_electric_price is not None and new_electric_price > 0:
-            existing_entry["electric_price"] = new_electric_price
-
-        updated_data.append(existing_entry)
-
-    save_data(updated_data)
-    return redirect(url_for('home'))
-
 # Страница "О нас"
 @app.route('/about')
 def about():
@@ -114,15 +86,18 @@ def about():
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-  
+
     # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
     chrome_driver_path = '/usr/local/bin/chromedriver'
-    chrome_binary_path = '/usr/bin/chromium'
+    chrome_binary_path = '/usr/bin/chromium-browser'
     
     # Настройки для Chrome
     chrome_options = Options()
     chrome_options.binary_location = chrome_binary_path
-    
+    chrome_options.add_argument("--headless")  # Запуск в headless режиме
+    chrome_options.add_argument("--no-sandbox")  # Без песочницы
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
+
     # Создаем сервис с использованием локального пути к chromedriver
     service = Service(executable_path=chrome_driver_path)
     
@@ -132,11 +107,7 @@ def get_latest_data(existing_data):
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-        print("Chromedriver initialized successfully")
-    except Exception as e:
-        print("Error initializing Chromedriver:", e)
-
+        # Авторизация
         driver.get("https://www.benzin-price.ru/account.php")
         username_field = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='login']"))
@@ -155,7 +126,8 @@ def get_latest_data(existing_data):
 
         time.sleep(5)
 
-        for region_id in range(1, 6):
+        # Сбор данных по регионам
+        for region_id, region_name in enumerate(REGION_ORDER, start=1):  # Используем список регионов
             region_url = f'https://www.benzin-price.ru/stat_month.php?region_id={region_id}'
             driver.get(region_url)
             time.sleep(10)
@@ -188,7 +160,7 @@ def get_latest_data(existing_data):
 
                     latest_prices[region_id] = {
                         "id": region_id,
-                        "region": existing_data[region_id - 1]["region"],
+                        "region": region_name,  # Теперь используем правильное имя региона
                         "ai_95_price": last_valid_data["ai_95_price"],
                         "electric_price": existing_data[region_id - 1]["electric_price"],
                         "calc_value_3": calc_value_3,
