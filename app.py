@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Путь к файлу данных
 DATA_FILE = os.path.join(os.getcwd(), 'data.json')
 
-# Список регионов (для справки, не используется прямо сейчас)
+# Список регионов (для справки)
 REGION_ORDER = [
     "Белгородская область", "Брянская область", "Владимирская область", "Воронежская область",
     "Ивановская область", "Калужская область", "Костромская область", "Курская область",
@@ -77,35 +77,49 @@ def update_data():
         save_data(new_data)
     return redirect(url_for('home'))
 
-# Страница "О нас"
-@app.route('/about')
-def about():
-    return 'About Page'
+# Обновление данных по электричеству
+@app.route('/update_electric_data', methods=['POST'])
+def update_electric_data():
+    electric_data = fetch_electric_data()
+    data = load_data()
 
-# Функция для получения данных с сайта
+    updated_data = []
+    for existing_entry in data:
+        region = existing_entry.get("region")
+        if not region:
+            continue
+
+        new_electric_price = electric_data.get(region)
+
+        if new_electric_price is not None and new_electric_price > 0:
+            existing_entry["electric_price"] = new_electric_price
+
+        updated_data.append(existing_entry)
+
+    save_data(updated_data)
+    return redirect(url_for('home'))
+
+# Функция для получения данных с сайта (для бензина)
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
 
     # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
-    chrome_driver_path = '/usr/local/bin/chromedriver'
-    chrome_binary_path = '/usr/bin/chromium-browser'
-    
-    # Настройки для Chrome
+    chrome_driver_path = '/usr/local/bin/chromedriver'  # Убедитесь, что путь правильный
+    chrome_binary_path = '/usr/bin/chromium-browser'  # Убедитесь, что путь правильный
+
     chrome_options = Options()
     chrome_options.binary_location = chrome_binary_path
-  
+    chrome_options.add_argument("--headless")  # Запуск в headless режиме
+    chrome_options.add_argument("--no-sandbox")  # Без песочницы
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
 
-    # Создаем сервис с использованием локального пути к chromedriver
     service = Service(executable_path=chrome_driver_path)
-    
-    # Запуск WebDriver
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
     try:
-        # Авторизация
         driver.get("https://www.benzin-price.ru/account.php")
         username_field = WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='login']"))
@@ -124,8 +138,7 @@ def get_latest_data(existing_data):
 
         time.sleep(5)
 
-        # Сбор данных по регионам
-        for region_id, region_name in enumerate(REGION_ORDER, start=1):  # Используем список регионов
+        for region_id in range(1, 6):  # Можете изменять диапазон в зависимости от нужд
             region_url = f'https://www.benzin-price.ru/stat_month.php?region_id={region_id}'
             driver.get(region_url)
             time.sleep(10)
@@ -158,7 +171,7 @@ def get_latest_data(existing_data):
 
                     latest_prices[region_id] = {
                         "id": region_id,
-                        "region": region_name,  # Теперь используем правильное имя региона
+                        "region": existing_data[region_id - 1]["region"],
                         "ai_95_price": last_valid_data["ai_95_price"],
                         "electric_price": existing_data[region_id - 1]["electric_price"],
                         "calc_value_3": calc_value_3,
@@ -171,6 +184,32 @@ def get_latest_data(existing_data):
         driver.quit()
 
     return list(latest_prices.values())
+
+# Функция для получения данных по электричеству
+def fetch_electric_data():
+    service = webdriver.chrome.service.Service()
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    url = 'https://time2save.ru/tarify-na-elektroenergiu-dla-malih-predpriyatiy-i-ip'
+
+    try:
+        driver.get(url)
+        time.sleep(20)
+        table = driver.find_element(By.CLASS_NAME, 'table_title')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+
+        data = {}
+        for row in rows[2:]:
+            cells = row.find_elements(By.TAG_NAME, 'td')
+            if len(cells) > 0:
+                region = cells[0].text.strip()
+                price = float(cells[-2].text.strip().replace(',', '.'))
+                data[region] = round(price, 2)
+        return data
+    except Exception as e:
+        print("Ошибка при парсинге электричества:", e)
+        return {}
+    finally:
+        driver.quit()
 
 if __name__ == '__main__':
     app.run(debug=True)
