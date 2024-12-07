@@ -53,7 +53,7 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install flask selenium beautifulsoup4 requests loguru
 
     # 5. Тестируем Selenium в headless режиме
     - name: Test Selenium in headless mode
