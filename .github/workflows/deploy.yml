@@ -14,44 +14,61 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем Chromium и настраиваем ChromeDriver
-    - name: Install Chromium and set up ChromeDriver
+    # 2. Скачиваем и собираем Chromium из исходников
+    - name: Download and build Chromium from source
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget unzip
+        sudo apt-get install -y wget unzip build-essential python3-dev \
+          curl git libnss3-dev libx11-dev libxcomposite-dev \
+          libxrandr-dev libgdk-pixbuf2.0-dev libatk-bridge2.0-dev \
+          libatk1.0-dev libcups2-dev libasound2-dev \
+          libdbus-1-dev libxtst-dev
 
-        # Устанавливаем Chromium
-        sudo apt-get install -y chromium-browser
-        ls -l /usr/bin/chromium-browser
-
-        sudo apt-get install libx11-6 libgdk-pixbuf2.0-0 libnss3 libatk-bridge2.0-0 libatk1.0-0 libcups2 libxcomposite1 libxrandr2 libasound2 libappindicator3-1 libdbusmenu-glib4
-
-
-        # Получаем версию установленного Chromium
-        CHROMIUM_VERSION=$(chromium-browser --version | awk '{print $2}' | cut -d'.' -f1,2)
-
-        echo "Installing ChromeDriver for Chromium version: $CHROMIUM_VERSION"
-
-        # Загружаем ChromeDriver для версии 131.0.6778.85 (та же версия, что и Chromium)
-        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/linux64/chromedriver-linux64.zip"
-        wget $CHROMEDRIVER_URL -O chromedriver-linux64.zip
+        # Скачиваем архив с исходным кодом Chromium
+        wget https://chromium.googlesource.com/chromium/src/+archive/refs/tags/131.0.6778.85.tar.gz -O chromium-src.tar.gz
 
         # Распаковываем архив
+        tar -xvzf chromium-src.tar.gz
+        cd src
+
+        # Устанавливаем необходимые зависимости для сборки Chromium
+        ./build/install-build-deps.sh
+
+        # Сборка Chromium (можно указать конкретный профиль сборки, чтобы ускорить процесс)
+        ./build/gyp_chromium
+        make -j$(nproc) chromium
+
+        # Сохраняем собранный Chromium
+        sudo cp out/Release/chrome /usr/bin/chromium-browser
+
+    # 3. Загружаем и устанавливаем ChromeDriver
+    - name: Install ChromeDriver
+      run: |
+        # Устанавливаем версию Chromium
+        CHROMIUM_VERSION=$(chromium-browser --version | awk '{print $2}' | cut -d'.' -f1,2)
+        echo "Chromium version: $CHROMIUM_VERSION"
+
+        # Загружаем нужную версию ChromeDriver для соответствующей версии Chromium
+        CHROMEDRIVER_VERSION="131.0.6778.85"
+        CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
+        wget $CHROMEDRIVER_URL -O chromedriver-linux64.zip
+
+        # Распаковываем архив с ChromeDriver
         unzip chromedriver-linux64.zip -d chromedriver-linux64
 
         # Перемещаем файл chromedriver в /usr/local/bin
         sudo mv chromedriver-linux64/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
 
-        # Проверяем версию ChromeDriver
+        # Проверяем установленную версию ChromeDriver
         chromedriver --version
 
-    # 3. Устанавливаем Python
+    # 4. Устанавливаем Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    # 4. Устанавливаем зависимости Python
+    # 5. Устанавливаем зависимости Python
     - name: Install Python dependencies
       run: |
         python -m venv venv
@@ -59,7 +76,7 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 5. Тестируем Selenium в headless режиме
+    # 6. Тестируем Selenium в headless режиме
     - name: Test Selenium in headless mode
       run: |
         source venv/bin/activate
@@ -67,7 +84,7 @@ jobs:
         from selenium import webdriver;
         from selenium.webdriver.chrome.service import Service;
         from selenium.webdriver.chrome.options import Options;
-        
+
         # Настройка параметров для headless режима
         options = Options();
         options.binary_location = '/usr/bin/chromium-browser';  # Путь к установленному Chromium
@@ -80,7 +97,7 @@ jobs:
         # Путь к ChromeDriver
         service = Service('/usr/local/bin/chromedriver');
         driver = webdriver.Chrome(service=service, options=options);
-        
+
         # Тестируем подключение
         driver.get('https://www.google.com');
         print('Page title is:', driver.title);
