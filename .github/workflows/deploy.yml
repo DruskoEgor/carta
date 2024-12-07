@@ -24,7 +24,7 @@ jobs:
         sudo apt-get install -y chromium-browser
 
         # Перемещаем предоставленный ChromeDriver
-        mv /mnt/c:/chromedriver/chromedriver.exe /usr/local/bin/chromedriver
+        mv /mnt/C:/chromedriver/chromedriver.exe /usr/local/bin/chromedriver
         chmod +x /usr/local/bin/chromedriver
 
     # 3. Устанавливаем Python
