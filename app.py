@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+import logging
 
 app = Flask(__name__)
 
@@ -100,24 +101,37 @@ def update_electric_data():
     save_data(updated_data)
     return redirect(url_for('home'))
 
+logging.basicConfig(level=logging.DEBUG)
+# Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
+chrome_driver_path = '/usr/local/bin/chromedriver'  # Путь к ChromeDriver
+chrome_binary_path = '/usr/bin/chromium-browser'  # Путь к Chromium
+
+chrome_options = Options()
+chrome_options.binary_location = chrome_binary_path
+chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
+chrome_options.add_argument("--headless")  # Режим без интерфейса
+chrome_options.add_argument("--no-sandbox")  # Для повышения безопасности
+chrome_options.add_argument("--remote-debugging-port=9222")  # Для отладки
+
+service = Service(executable_path=chrome_driver_path)
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+try:
+    logging.debug("Запуск веб-драйвера...")
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver.get('https://www.google.com')
+    print("Title of the page is:", driver.title)
+except Exception as e:
+    logging.error(f"Ошибка при запуске Selenium: {e}")
+finally:
+    if 'driver' in locals():
+        driver.quit()
+
+
 # Функция для получения данных с сайта (для бензина)
 def get_latest_data(existing_data):
     username = 'leidark777@gmail.com'
     password = 'lei777dark'
-
-    # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
-    chrome_driver_path = '/usr/local/bin/chromedriver'  # Путь к ChromeDriver
-    chrome_binary_path = '/usr/bin/chromium-browser'  # Путь к Chromium
-
-    chrome_options = Options()
-    chrome_options.binary_location = chrome_binary_path
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Устранение проблем с памятью
-    chrome_options.add_argument("--headless")  # Режим без интерфейса
-    chrome_options.add_argument("--no-sandbox")  # Для повышения безопасности
-    chrome_options.add_argument("--remote-debugging-port=9222")  # Для отладки
-
-    service = Service(executable_path=chrome_driver_path)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     latest_prices = {region['id']: region for region in existing_data}
 
