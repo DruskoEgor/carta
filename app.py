@@ -104,7 +104,7 @@ def update_electric_data():
 logging.basicConfig(level=logging.DEBUG)
 # Путь к бинарному файлу Chrome и ChromeDriver, установленным через bash
 chrome_driver_path = '/usr/local/bin/chromedriver'  # Путь к ChromeDriver
-chrome_binary_path = '/usr/bin/chromium'  # Путь к Chromium
+chrome_binary_path = '/usr/bin/chromium-browser'  # Путь к Chromium
 
 chrome_options = Options()
 chrome_options.binary_location = chrome_binary_path
