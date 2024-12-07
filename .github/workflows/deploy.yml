@@ -88,5 +88,3 @@ jobs:
         "
         which chromium-browser
         which chromedriver
-
-
