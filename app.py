@@ -114,7 +114,7 @@ chrome_options.add_argument("--no-sandbox")  # Для повышения без�
 chrome_options.add_argument("--remote-debugging-port=9222")  # Для отладки
 
 service = Service(executable_path=chrome_driver_path)
-driver = webdriver.Chrome(service=service, options=chrome_options)
+driver = webdriver.Chrome()
 
 try:
     logging.debug("Запуск веб-драйвера...")
