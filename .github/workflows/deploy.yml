@@ -13,26 +13,34 @@ jobs:
     # 1. Клонируем репозиторий
     - name: Checkout repository
       uses: actions/checkout@v3
-    
     # 2. Устанавливаем Chromium и настраиваем ChromeDriver
     - name: Install Chromium and set up ChromeDriver
       run: |
         sudo apt-get update
         sudo apt-get install -y wget unzip
+    
         # Устанавливаем Chromium
         sudo apt-get install -y chromium-browser
+    
         # Получаем версию установленного Chromium
         CHROMIUM_VERSION=$(chromium-browser --version | awk '{print $2}' | cut -d'.' -f1,2)
+    
         echo "Installing ChromeDriver for Chromium version: $CHROMIUM_VERSION"
+    
         # Загружаем ChromeDriver для версии 131.0.6778.87
         CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.87/linux64/chromedriver-linux64.zip"
         wget $CHROMEDRIVER_URL -O chromedriver-linux64.zip
+    
         # Распаковываем архив
         unzip chromedriver-linux64.zip -d chromedriver-linux64
+    
         # Перемещаем файл chromedriver в /usr/local/bin
-        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+        sudo mv chromedriver-linux64/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+    
         # Проверяем версию ChromeDriver
         chromedriver --version
+
+    
     # 3. Устанавливаем Python
     - name: Set up Python
       uses: actions/setup-python@v4
