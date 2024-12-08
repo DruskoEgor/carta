@@ -61,7 +61,7 @@ def get_latest_benzin_data(existing_data):
 
         time.sleep(5)
 
-        for region_id in range(1, len(REGION_ORDER)+1):
+        for region_id in range(1, 6):
             region_url = f'https://www.benzin-price.ru/stat_month.php?region_id={region_id}'
             driver.get(region_url)
             time.sleep(10)
