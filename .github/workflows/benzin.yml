@@ -53,8 +53,15 @@ jobs:
             libxss1
 
           # Установка Chromium с вашего источника
-          wget https://pkg.freebsd.org/FreeBSD:13:amd64/latest/All/linux-chrome-131.0.6778.85.pkg -O chromium-linux-package.pkg
-          sudo dpkg -i chromium-linux-package.pkg
+          wget https://chromium.googlesource.com/chromium/src/+archive/refs/tags/131.0.6778.85.tar.gz -O chromium-src.tar.gz
+          # Распаковываем архив
+          tar -xvzf chromium-src.tar.gz
+          cd src
+          # Устанавливаем необходимые зависимости для сборки Chromium
+          ./build/install-build-deps.sh
+          # Сохраняем собранный Chromium
+          sudo cp out/Release/chrome /usr/bin/chromium-browser
+
           sudo apt-get install -f
 
           # Установка ChromeDriver
