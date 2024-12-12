@@ -7,14 +7,14 @@ app = Flask(__name__)
 
 # Параметры для GitHub API
 GITHUB_REPO = "1leidark/carta"
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json"
 }
 
-def trigger_github_workflow(workflow_file, ref="main"):
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{workflow_file}/dispatches"
+def trigger_github_action(repo_name, workflow_file, ref="main"):
+    url = f"https://api.github.com/repos/{repo_name}/actions/workflows/{workflow_file}/dispatches"
     data = {"ref": ref}
     response = requests.post(url, headers=HEADERS, json=data)
     return response
