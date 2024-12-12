@@ -7,28 +7,17 @@ app = Flask(__name__)
 
 # Параметры для GitHub API
 GITHUB_REPO = "1leidark/carta"
-GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/dispatches"
-
-# Ваш токен
 GITHUB_TOKEN = "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"
 HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json"
 }
 
-def trigger_github_action(repo_name, workflow_file, ref="main"):
-    url = f"https://api.github.com/repos/{repo_name}/actions/workflows/{workflow_file}/dispatches"
-    data = {
-        "ref": ref
-    }
+def trigger_github_workflow(workflow_file, ref="main"):
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{workflow_file}/dispatches"
+    data = {"ref": ref}
     response = requests.post(url, headers=HEADERS, json=data)
-
-    if response.status_code == 204:
-        print(f"Workflow {workflow_file} запущен успешно!")
-    else:
-        print(f"Ошибка запуска workflow: {response.status_code}")
-        print(response.json())
-
+    return response
 
 @app.route('/')
 def home():
@@ -38,33 +27,26 @@ def home():
 
 @app.route('/update_benzin', methods=['POST'])
 def update_benzin():
-    # Локальный запуск парсера
     subprocess.run(['python', 'benzin.py'])
     return redirect(url_for('home'))
 
 @app.route('/update_electric', methods=['POST'])
 def update_electric():
-    # Локальный запуск парсера
     subprocess.run(['python', 'electricity.py'])
     return redirect(url_for('home'))
 
 @app.route('/run_parser', methods=['POST'])
 def run_parser():
-    # Запуск парсеров через GitHub Actions
     parser_type = request.form.get("parser_type")
 
     if parser_type == "benzin":
-        event_type = "run-benzin-parser"
+        workflow_file = "benzin.yml"
     elif parser_type == "electricity":
-        event_type = "run-electricity-parser"
+        workflow_file = "electricity.yml"
     else:
         return jsonify({"error": "Invalid parser type"}), 400
 
-    response = requests.post(
-        GITHUB_API_URL,
-        json={"event_type": event_type}
-    )
-
+    response = trigger_github_workflow(workflow_file)
     if response.status_code == 204:
         return jsonify({"success": f"Parser '{parser_type}' triggered successfully"}), 200
     else:
