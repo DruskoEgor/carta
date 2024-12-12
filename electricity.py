@@ -35,8 +35,15 @@ REGION_ORDER = [
 ]
 
 def fetch_electric_data():
-    service = webdriver.chrome.service.Service()
-    driver = webdriver.Chrome(service=service, options={})
+    options = Options()
+    options.add_argument('--no-sandbox')  # Необходимо для CI/CD
+    options.add_argument('--disable-dev-shm-usage')  # Помогает в контейнерах
+
+    # Указываем путь к ChromeDriver
+    service = Service('/usr/local/bin/chromedriver')
+
+    # Инициализация драйвера с настройками
+    driver = webdriver.Chrome(service=service, options=options)
     url = 'https://time2save.ru/tarify-na-elektroenergiu-dla-malih-predpriyatiy-i-ip'
 
     try:
