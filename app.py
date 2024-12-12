@@ -37,20 +37,21 @@ def update_electric():
 
 @app.route('/run_parser', methods=['POST'])
 def run_parser():
+    # Запуск парсеров через GitHub Actions
     parser_type = request.form.get("parser_type")
 
     if parser_type == "benzin":
-        workflow_file = "benzin.yml"
+        event_type = "run-benzin-parser"
+        workflow_file = "benzin.yml"  # Укажите имя файла workflow
     elif parser_type == "electricity":
-        workflow_file = "electricity.yml"
+        event_type = "run-electricity-parser"
+        workflow_file = "electricity.yml"  # Укажите имя файла workflow
     else:
         return jsonify({"error": "Invalid parser type"}), 400
 
-    response = trigger_github_workflow(workflow_file)
-    if response.status_code == 204:
-        return jsonify({"success": f"Parser '{parser_type}' triggered successfully"}), 200
-    else:
-        return jsonify({"error": response.json()}), response.status_code
+    # Здесь используем правильное название функции
+    trigger_github_action("1leidark/carta", workflow_file)
 
-if __name__ == '__main__':
+    return jsonify({"success": f"Parser '{parser_type}' triggered successfully"}), 200
+
     app.run(debug=True)
