@@ -42,8 +42,10 @@ REGION_ORDER = [
 def get_latest_benzin_data(existing_data):
     latest_prices = {region['id']: region for region in existing_data}
     options = Options()
+    options.add_argument('--headless')  # Запуск в безголовом режиме
     options.add_argument('--no-sandbox')  # Необходимо для CI/CD
-    options.add_argument('--disable-dev-shm-usage')  # Помогает в контейнерах
+    options.add_argument('--disable-dev-shm-usage')  # Для работы в ограниченных контейнерах
+    options.add_argument('--disable-gpu')  # Еще одна опция для headless
 
     # Указываем путь к ChromeDriver
     service = Service('/usr/local/bin/chromedriver')
