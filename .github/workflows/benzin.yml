@@ -52,18 +52,14 @@ jobs:
             libnspr4-dev \
             libxss1
 
-          # Установка последней версии Google Chrome
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          # Установка Chromium с вашего источника
+          wget https://pkg.freebsd.org/FreeBSD:13:amd64/latest/All/linux-chrome-131.0.6778.85.pkg -O chromium-linux-package.pkg
+          sudo dpkg -i chromium-linux-package.pkg
           sudo apt-get install -f
 
-          # Получение текущей версии Google Chrome
-          CHROME_VERSION=$(google-chrome-stable --version | awk '{print $3}' | cut -d '.' -f 1,2)
-
-          # Установка соответствующей версии ChromeDriver
-          CHROMEDRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
-          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
+          # Установка ChromeDriver
+          wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/linux64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip
           sudo mv chromedriver /usr/local/bin/
 
       # Шаг 5: Запуск парсера
