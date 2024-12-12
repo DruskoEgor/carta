@@ -9,6 +9,27 @@ app = Flask(__name__)
 GITHUB_REPO = "1leidark/carta"
 GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/dispatches"
 
+# Ваш токен
+GITHUB_TOKEN = "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"
+HEADERS = {
+    "Authorization": f"token {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github.v3+json"
+}
+
+def trigger_github_action(repo_name, workflow_file, ref="main"):
+    url = f"https://api.github.com/repos/{repo_name}/actions/workflows/{workflow_file}/dispatches"
+    data = {
+        "ref": ref
+    }
+    response = requests.post(url, headers=HEADERS, json=data)
+
+    if response.status_code == 204:
+        print(f"Workflow {workflow_file} запущен успешно!")
+    else:
+        print(f"Ошибка запуска workflow: {response.status_code}")
+        print(response.json())
+
+
 @app.route('/')
 def home():
     with open('data.json', 'r', encoding='utf-8') as f:
