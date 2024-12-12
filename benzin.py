@@ -40,8 +40,15 @@ REGION_ORDER = [
 # Получаем последние данные о бензине
 def get_latest_benzin_data(existing_data):
     latest_prices = {region['id']: region for region in existing_data}
+    options = Options()
+    options.add_argument('--no-sandbox')  # Необходимо для CI/CD
+    options.add_argument('--disable-dev-shm-usage')  # Помогает в контейнерах
 
-    driver = webdriver.Chrome(service=Service(), options={})
+    # Указываем путь к ChromeDriver
+    service = Service('/usr/local/bin/chromedriver')
+
+    # Инициализация драйвера с настройками
+    driver = webdriver.Chrome(service=service, options=options)
     try:
         driver.get("https://www.benzin-price.ru/account.php")
         username_field = WebDriverWait(driver, 60).until(
