@@ -27,6 +27,7 @@ jobs:
       # Шаг 4: Установка Google Chrome и ChromeDriver
       - name: Install Chrome and ChromeDriver
         run: |
+          # Установка зависимостей для Google Chrome
           sudo apt-get update
           sudo apt-get install -y \
             wget \
@@ -56,8 +57,11 @@ jobs:
           sudo dpkg -i google-chrome-stable_current_amd64.deb
           sudo apt-get install -f
 
-          # Установка ChromeDriver
-          CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`
+          # Получение текущей версии Google Chrome
+          CHROME_VERSION=$(google-chrome-stable --version | awk '{print $3}' | cut -d '.' -f 1,2)
+
+          # Установка соответствующей версии ChromeDriver
+          CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION`
           wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
