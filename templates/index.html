@@ -10,7 +10,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212;
+            background-color: #121212; /* Основной фон сайта */
             color: #f0f0f0;
             display: flex;
             flex-direction: column;
@@ -138,14 +138,50 @@
         <!-- Контейнер для карты -->
         <div class="map-container">
             <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af98e2f99a8e40e1877f32b49a0030c9c2bb04491909b8d9ea3e4fc62fa7b3f71&amp;width=100%25&amp;height=100%25&amp;lang=ru_RU&amp;scroll=true"></script>
+
+            <!-- Кастомизация карты -->
+            <script type="text/javascript">
+                ymaps.ready(function () {
+                    var map = new ymaps.Map("map-container", {
+                        center: [55.75, 37.57], // Центр карты
+                        zoom: 10,
+                        controls: ["zoomControl", "typeSelector", "geolocationControl"]
+                    });
+
+                    // Кастомизация слоев карты
+                    map.setStyle({
+                        "version": "2.1",
+                        "resources": [
+                            {
+                                "type": "vector",
+                                "style": {
+                                    "background": {
+                                        "color": "#121212" // Темный фон карты
+                                    },
+                                    "water": {
+                                        "opacity": 0.1 // Прозрачные водоемы
+                                    },
+                                    "road": {
+                                        "hue": "#00ff00", // Зеленые дороги
+                                        "saturation": 0.7,
+                                        "lightness": -0.1
+                                    },
+                                    "landcover": {
+                                        "color": "#2c2c2c" // Цвет земли и растительности
+                                    }
+                                }
+                            }
+                        ]
+                    });
+                });
+            </script>
         </div>
 
         <div class="content">
-            <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.
-            Стоимость энергии для электрического транспорта часто значительно ниже, чем для традиционных автомобилей.</p>
-            <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта
-            выгоднее для вашего региона.</p>
+            <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
+            <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта выгоднее для вашего региона.</p>
         </div>
+
         <!-- Таблица -->
         <div class="table-container">
             <table>
@@ -173,6 +209,7 @@
                 </tbody>
             </table>
         </div>
+
         <!-- Таблица -->
         <div class="table-container">
             <table>
@@ -201,7 +238,6 @@
 
         <!-- Кнопки под таблицей -->
         <div class="btn-group">
-            <!-- Запуск через GitHub Actions -->
             <form action="{{ url_for('run_parser') }}" method="post">
                 <input type="hidden" name="parser_type" value="benzin">
                 <button type="submit">Запустить парсер бензина (GitHub Actions)</button>
