@@ -85,7 +85,7 @@ jobs:
         which chromium-browser
         which chromedriver
 
-    # 6. Запуск вашего парсера
+    # 6. Запуск вашего парсера 
     - name: Run benzin.py parser
       run: |
         source venv/bin/activate
