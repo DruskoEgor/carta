@@ -2,7 +2,7 @@
     {
         "id": 1,
         "region": "Белгородская область  ",
-        "ai_95_price": 1,
+        "ai_95_price": 54.9,
         "electric_price": 7.19,
         "calc_value_3": 439.2,
         "calc_value_4": 148.114,
@@ -11,7 +11,7 @@
     {
         "id": 2,
         "region": "Брянская область ",
-        "ai_95_price": 54.7,
+        "ai_95_price": 1,
         "electric_price": 9.02,
         "calc_value_3": 437.6,
         "calc_value_4": 185.812,
