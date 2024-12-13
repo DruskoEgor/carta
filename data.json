@@ -7,6 +7,10 @@
         "calc_value_3": 439.2,
         "calc_value_4": 148.114,
         "source": "ИСТИНА"
+        "area": 27134,
+        "min_refuel_stations": 27134,
+        "refuel_stations": 7,
+        "has_1000km_refuel": "нет"
     },
     {
         "id": 2,
