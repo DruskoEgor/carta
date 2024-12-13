@@ -26,7 +26,7 @@ def index():
     return render_template('index.html', data=data)
     
 @app.route('/')
-def index():
+def home():
     with open('data.json', 'r') as file:
         data = json.load(file)
     return render_template('index.html', data=data)
