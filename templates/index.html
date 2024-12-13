@@ -43,6 +43,12 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
         }
 
+        #map {
+            width: 100%; /* Устанавливаем карту на 100% ширины контейнера */
+            height: 500px; /* Устанавливаем карту на 500px высоты */
+            background-color: #f0f0f0; /* Чтобы визуально видеть контейнер */
+        }
+
         .content {
             margin-bottom: 30px;
             text-align: center;
@@ -136,7 +142,9 @@
         <h1>ЭЛЕКТРОМОБИЛИ VS АВТОМОБИЛИ</h1>
 
         <!-- Контейнер для карты -->
-        <div class="map-container" id="map"></div>
+        <div class="map-container">
+            <div id="map"></div> <!-- Карта будет размещена здесь -->
+        </div>
 
         <div class="content">
             <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
@@ -213,60 +221,18 @@
     <!-- Подключение скрипта для Яндекс карт с API ключом -->
     <script src="https://api-maps.yandex.ru/2.1/?apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b&lang=ru_RU" type="text/javascript"></script>
     <script>
-        async function initMap() {
-            // Промис `ymaps.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-            await ymaps3.ready;
+        ymaps.ready(init);
 
-            const {YMap, YMapDefaultSchemeLayer} = ymaps3;
-
-            // Иницилиазируем карту
-            const map = new YMap(
-                // Передаём ссылку на HTMLElement контейнера
-                document.getElementById('map'),
-
-                // Передаём параметры инициализации карты
-                {
-                    location: {
-                        // Координаты центра карты
-                        center: [37.588144, 55.733842], // Москва
-                        // Уровень масштабирования
-                        zoom: 10
-                    }
-                }
-            );
-
-            // Добавляем слой для отображения схематической карты
-            map.addChild(new YMapDefaultSchemeLayer());
-
-            // Применяем кастомизацию карты
-            map.setStyle({
-                "version": "2.1",
-                "resources": [
-                    {
-                        "type": "vector",
-                        "style": {
-                            "background": {
-                                "color": "#121212" // Темный фон карты
-                            },
-                            "water": {
-                                "opacity": 0.1 // Прозрачные водоемы
-                            },
-                            "road": {
-                                "hue": "#00ff00", // Зеленые дороги
-                                "saturation": 0.7,
-                                "lightness": -0.1
-                            },
-                            "landcover": {
-                                "color": "#2c2c2c" // Цвет земли и растительности
-                            }
-                        }
-                    }
-                ]
+        function init() {
+            var map = new ymaps.Map("map", {
+                center: [55.7558, 37.6173], // Центр карты (Москва)
+                zoom: 10,
+                controls: ['zoomControl', 'typeSelector', 'fullscreenControl'] // Контролы для карты
             });
-        }
 
-        // Инициализация карты
-        initMap();
+            // Добавление схемы карты
+            map.setType('yandex#map');
+        }
     </script>
 </body>
 </html>
