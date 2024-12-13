@@ -1,4 +1,4 @@
-name: Deploy to Render (Linux Server)
+name: run benzin parser
 
 on:
   push:
