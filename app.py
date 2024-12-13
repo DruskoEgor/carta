@@ -19,7 +19,7 @@ def trigger_github_action(repo_name, workflow_file, ref="main"):
     response = requests.post(url, headers=HEADERS, json=data)
     return response
     
-@app.route('/')
+@app.route('/dannye')
 def index():
     with open('data1.json', 'r') as file:
         data = json.load(file)
