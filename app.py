@@ -26,9 +26,9 @@ def index():
     return render_template('index.html', data=data)
     
 @app.route('/')
-def home():
-    with open('data.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
+def index():
+    with open('data.json', 'r') as file:
+        data = json.load(file)
     return render_template('index.html', data=data)
 
 @app.route('/update_benzin', methods=['POST'])
