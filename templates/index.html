@@ -169,6 +169,7 @@
                         <td>{{ item.calc_value_4 }}</td>
                         <td>{{ item.source }}</td>
                     </tr>
+                    <pre>{{ data | tojson }}</pre>
                     {% endfor %}
                 </tbody>
             </table>
@@ -194,6 +195,7 @@
                         <td>{{ item.refuel_stations }}</td>
                         <td>{{ item.has_1000km_refuel }}</td>
                     </tr>
+                    <pre>{{ data | tojson }}</pre>
                     {% endfor %}
                 </tbody>
             </table>
