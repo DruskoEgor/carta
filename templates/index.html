@@ -143,6 +143,9 @@
 
         <!-- Контейнер для карты -->
         <div class="map-container">
+            <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: #fff; display: none;">
+                Загрузка карты...
+            </div>
             <div id="map"></div> <!-- Карта будет размещена здесь -->
         </div>
 
@@ -224,34 +227,46 @@
         ymaps.ready(init);
 
         function init() {
+            // Показываем индикатор загрузки
+            document.getElementById('loading').style.display = 'block';
+
             var map = new ymaps.Map("map", {
                 center: [55.7558, 37.6173], // Центр карты (Москва)
-                zoom: 10,
+                zoom: 6, // Уровень приближения
                 controls: ['zoomControl', 'typeSelector', 'fullscreenControl'] // Контролы для карты
             });
 
-            // Добавление схемы карты
             map.setType('yandex#map');
 
             // Загружаем GeoJSON файл
-            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')  // Укажите путь к вашему файлу GeoJSON
+            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
                 .then(response => response.json())
                 .then(geojsonData => {
-                    // Преобразуем GeoJSON в GeoObject и добавляем на карту
-                    var geoObject = new ymaps.GeoObject({
-                        geometry: geojsonData.features[0].geometry, // Геометрия из GeoJSON
-                        properties: geojsonData.features[0].properties // Свойства (например, описание)
-                    }, {
-                        fillColor: geojsonData.features[0].properties.fill, // Цвет заливки
-                        fillOpacity: geojsonData.features[0].properties['fill-opacity'], // Прозрачность заливки
-                        strokeColor: geojsonData.features[0].properties.stroke, // Цвет обводки
-                        strokeWidth: geojsonData.features[0].properties['stroke-width'], // Толщина обводки
-                        strokeOpacity: geojsonData.features[0].properties['stroke-opacity'] // Прозрачность обводки
+                    // Обрабатываем все объекты из файла
+                    geojsonData.features.forEach(function (feature) {
+                        var geoObject = new ymaps.GeoObject({
+                            geometry: feature.geometry, // Геометрия из GeoJSON
+                            properties: feature.properties // Свойства объекта
+                        }, {
+                            fillColor: feature.properties.fill, // Цвет заливки
+                            fillOpacity: feature.properties['fill-opacity'], // Прозрачность заливки
+                            strokeColor: feature.properties.stroke, // Цвет обводки
+                            strokeWidth: feature.properties['stroke-width'], // Толщина обводки
+                            strokeOpacity: feature.properties['stroke-opacity'] // Прозрачность обводки
+                        });
+
+                        // Добавляем каждый geoObject на карту
+                        map.geoObjects.add(geoObject);
                     });
 
-                    map.geoObjects.add(geoObject); // Добавляем объект на карту
+                    // Скрываем индикатор загрузки после загрузки данных
+                    document.getElementById('loading').style.display = 'none';
                 })
-                .catch(error => console.error("Ошибка загрузки GeoJSON:", error));
+                .catch(error => {
+                    console.error("Ошибка загрузки GeoJSON:", error);
+                    // Скрываем индикатор загрузки при ошибке
+                    document.getElementById('loading').style.display = 'none';
+                });
         }
     </script>
 </body>
