@@ -224,33 +224,32 @@
         ymaps.ready(init);
 
         function init() {
-            // Создаем карту
             var map = new ymaps.Map("map", {
                 center: [55.7558, 37.6173], // Центр карты (Москва)
-                zoom: 6, // Уровень приближения
-                controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+                zoom: 10,
+                controls: ['zoomControl', 'typeSelector', 'fullscreenControl'] // Контролы для карты
             });
 
+            // Добавление схемы карты
+            map.setType('yandex#map');
+
             // Загружаем GeoJSON файл
-            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
+            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')  // Укажите путь к вашему файлу GeoJSON
                 .then(response => response.json())
                 .then(geojsonData => {
-                    // Проверяем и инвертируем координаты, если они инверсированы
-                    geojsonData.features.forEach(feature => {
-                        if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
-                            feature.geometry.coordinates = feature.geometry.coordinates.map(polygon => 
-                                polygon.map(ring => 
-                                    ring.map(coord => [coord[1], coord[0]]) // Инвертируем широту и долготу
-                                )
-                            );
-                        } else if (feature.geometry.type === 'Point') {
-                            feature.geometry.coordinates = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-                        }
+                    // Преобразуем GeoJSON в GeoObject и добавляем на карту
+                    var geoObject = new ymaps.GeoObject({
+                        geometry: geojsonData.features[0].geometry, // Геометрия из GeoJSON
+                        properties: geojsonData.features[0].properties // Свойства (например, описание)
+                    }, {
+                        fillColor: geojsonData.features[0].properties.fill, // Цвет заливки
+                        fillOpacity: geojsonData.features[0].properties['fill-opacity'], // Прозрачность заливки
+                        strokeColor: geojsonData.features[0].properties.stroke, // Цвет обводки
+                        strokeWidth: geojsonData.features[0].properties['stroke-width'], // Толщина обводки
+                        strokeOpacity: geojsonData.features[0].properties['stroke-opacity'] // Прозрачность обводки
                     });
 
-                    // Добавляем данные GeoJSON на карту
-                    var geoObjects = ymaps.geoQuery(geojsonData);
-                    geoObjects.addToMap(map);
+                    map.geoObjects.add(geoObject); // Добавляем объект на карту
                 })
                 .catch(error => console.error("Ошибка загрузки GeoJSON:", error));
         }
