@@ -10,7 +10,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212;
+            background-color: #121212; /* Основной фон сайта */
             color: #f0f0f0;
             display: flex;
             flex-direction: column;
@@ -44,8 +44,9 @@
         }
 
         #map {
-            width: 100%;
-            height: 500px;
+            width: 100%; /* Устанавливаем карту на 100% ширины контейнера */
+            height: 500px; /* Устанавливаем карту на 500px высоты */
+            background-color: #f0f0f0; /* Чтобы визуально видеть контейнер */
         }
 
         .content {
@@ -142,10 +143,9 @@
 
         <!-- Контейнер для карты -->
         <div class="map-container">
-            <div id="map"></div>
+            <div id="map"></div> <!-- Карта будет размещена здесь -->
         </div>
 
-        <!-- Текстовый контент -->
         <div class="content">
             <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
             <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта выгоднее для вашего региона.</p>
@@ -218,15 +218,43 @@
         </div>
     </div>
 
-    <!-- Подключение карты -->
-    <script type="text/javascript">
-        ymaps.ready(function () {
+    <!-- Подключение скрипта для Яндекс карт с API ключом -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b&lang=ru_RU" type="text/javascript"></script>
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            // Создаем карту
             var map = new ymaps.Map("map", {
-                center: [55.751244, 37.618423], // Центр Москвы
-                zoom: 10 // Масштаб
+                center: [55.7558, 37.6173], // Центр карты (Москва)
+                zoom: 6, // Уровень приближения
+                controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
             });
-        });
+
+            // Добавление схемы карты
+            map.setType('yandex#map');
+
+            // Загружаем GeoJSON файл
+            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
+                .then(response => response.json())
+                .then(geojsonData => {
+                    geojsonData.features.forEach(feature => {
+                        var geoObject = new ymaps.GeoObject({
+                            geometry: feature.geometry,
+                            properties: feature.properties
+                        }, {
+                            fillColor: feature.properties.fill,
+                            fillOpacity: feature.properties['fill-opacity'],
+                            strokeColor: feature.properties.stroke,
+                            strokeWidth: feature.properties['stroke-width'],
+                            strokeOpacity: feature.properties['stroke-opacity']
+                        });
+
+                        map.geoObjects.add(geoObject);
+                    });
+                })
+                .catch(error => console.error("Ошибка загрузки GeoJSON:", error));
+        }
     </script>
-    <script type="text/javascript" charset="utf-8" src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af98e2f99a8e40e1877f32b49a0030c9c2bb04491909b8d9ea3e4fc62fa7b3f71&amp;id=mymap&amp;lang=ru_RU&amp;apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b"></script>
 </body>
 </html>
