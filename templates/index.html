@@ -236,28 +236,26 @@
                 controls: ['zoomControl', 'typeSelector', 'fullscreenControl'] // Контролы для карты
             });
 
-            map.setType('yandex#map');
+            // Применяем темный стиль
+            map.setStyle('yandex#dark');
 
             // Загружаем GeoJSON файл
             fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
                 .then(response => response.json())
                 .then(geojsonData => {
-                    // Обрабатываем все объекты из файла
-                    geojsonData.features.forEach(function (feature) {
-                        var geoObject = new ymaps.GeoObject({
-                            geometry: feature.geometry, // Геометрия из GeoJSON
-                            properties: feature.properties // Свойства объекта
-                        }, {
-                            fillColor: feature.properties.fill, // Цвет заливки
-                            fillOpacity: feature.properties['fill-opacity'], // Прозрачность заливки
-                            strokeColor: feature.properties.stroke, // Цвет обводки
-                            strokeWidth: feature.properties['stroke-width'], // Толщина обводки
-                            strokeOpacity: feature.properties['stroke-opacity'] // Прозрачность обводки
-                        });
-
-                        // Добавляем каждый geoObject на карту
-                        map.geoObjects.add(geoObject);
+                    // Преобразуем GeoJSON в GeoObject и добавляем на карту
+                    var geoObject = new ymaps.GeoObject({
+                        geometry: geojsonData.features[0].geometry, // Геометрия из GeoJSON
+                        properties: geojsonData.features[0].properties // Свойства (например, описание)
+                    }, {
+                        fillColor: geojsonData.features[0].properties.fill, // Цвет заливки
+                        fillOpacity: geojsonData.features[0].properties['fill-opacity'], // Прозрачность заливки
+                        strokeColor: geojsonData.features[0].properties.stroke, // Цвет обводки
+                        strokeWidth: geojsonData.features[0].properties['stroke-width'], // Толщина обводки
+                        strokeOpacity: geojsonData.features[0].properties['stroke-opacity'] // Прозрачность обводки
                     });
+
+                    map.geoObjects.add(geoObject); // Добавляем объект на карту
 
                     // Скрываем индикатор загрузки после загрузки данных
                     document.getElementById('loading').style.display = 'none';
