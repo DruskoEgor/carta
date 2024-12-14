@@ -10,7 +10,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212; /* Основной фон сайта */
+            background-color: #121212;
             color: #f0f0f0;
             display: flex;
             flex-direction: column;
@@ -41,6 +41,12 @@
             background-color: #1c1c1c;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        #map {
+            width: 100%; /* Устанавливаем карту на 100% ширины контейнера */
+            height: 500px; /* Устанавливаем карту на 500px высоты */
+            background-color: #f0f0f0; /* Чтобы визуально видеть контейнер */
         }
 
         .content {
@@ -136,7 +142,10 @@
         <h1>ЭЛЕКТРОМОБИЛИ VS АВТОМОБИЛИ</h1>
 
         <!-- Контейнер для карты -->
-        <div class="map-container" id="map"></div>
+        <div class="map-container">
+            <!-- Контейнер для карты (ID используется в ссылке конструктора) -->
+            <div id="map"></div>
+        </div>
 
         <div class="content">
             <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
@@ -210,63 +219,7 @@
         </div>
     </div>
 
-    <!-- Подключение скрипта для Яндекс карт с API ключом -->
-    <script type="text/javascript" charset="utf-8" src="https://api-maps.yandex.ru/services/constructor/2.1/js/?um=constructor%3Af98e2f99a8e40e1877f32b49a0030c9c2bb04491909b8d9ea3e4fc62fa7b3f71&amp;id=mymap&amp;lang=ru_RU&amp;apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b"></script>
-    <script>
-        async function initMap() {
-            // Промис `ymaps.ready` будет зарезолвлен, когда загрузятся все компоненты основного модуля API
-            await ymaps3.ready;
-
-            const {YMap, YMapDefaultSchemeLayer} = ymaps3;
-
-            // Иницилиазируем карту
-            const map = new YMap(
-                // Передаём ссылку на HTMLElement контейнера
-                document.getElementById('map'),
-
-                // Передаём параметры инициализации карты
-                {
-                    location: {
-                        // Координаты центра карты
-                        center: [37.588144, 55.733842], // Москва
-                        // Уровень масштабирования
-                        zoom: 10
-                    }
-                }
-            );
-
-            // Добавляем слой для отображения схематической карты
-            map.addChild(new YMapDefaultSchemeLayer());
-
-            // Применяем кастомизацию карты
-            map.setStyle({
-                "version": "2.1",
-                "resources": [
-                    {
-                        "type": "vector",
-                        "style": {
-                            "background": {
-                                "color": "#121212" // Темный фон карты
-                            },
-                            "water": {
-                                "opacity": 0.1 // Прозрачные водоемы
-                            },
-                            "road": {
-                                "hue": "#00ff00", // Зеленые дороги
-                                "saturation": 0.7,
-                                "lightness": -0.1
-                            },
-                            "landcover": {
-                                "color": "#2c2c2c" // Цвет земли и растительности
-                            }
-                        }
-                    }
-                ]
-            });
-        }
-
-        // Инициализация карты
-        initMap();
-    </script>
+    <!-- Подключение карты из Яндекс Конструктора -->
+    <script type="text/javascript" charset="utf-8" src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af98e2f99a8e40e1877f32b49a0030c9c2bb04491909b8d9ea3e4fc62fa7b3f71&amp;id=mymap&amp;lang=ru_RU&amp;apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b"></script>
 </body>
 </html>
