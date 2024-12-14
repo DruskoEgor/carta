@@ -231,27 +231,26 @@
                 controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
             });
 
-            // Добавление схемы карты
-            map.setType('yandex#map');
-
             // Загружаем GeoJSON файл
             fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
                 .then(response => response.json())
                 .then(geojsonData => {
+                    // Проверяем и инвертируем координаты, если они инверсированы
                     geojsonData.features.forEach(feature => {
-                        var geoObject = new ymaps.GeoObject({
-                            geometry: feature.geometry,
-                            properties: feature.properties
-                        }, {
-                            fillColor: feature.properties.fill,
-                            fillOpacity: feature.properties['fill-opacity'],
-                            strokeColor: feature.properties.stroke,
-                            strokeWidth: feature.properties['stroke-width'],
-                            strokeOpacity: feature.properties['stroke-opacity']
-                        });
-
-                        map.geoObjects.add(geoObject);
+                        if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
+                            feature.geometry.coordinates = feature.geometry.coordinates.map(polygon => 
+                                polygon.map(ring => 
+                                    ring.map(coord => [coord[1], coord[0]]) // Инвертируем широту и долготу
+                                )
+                            );
+                        } else if (feature.geometry.type === 'Point') {
+                            feature.geometry.coordinates = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+                        }
                     });
+
+                    // Добавляем данные GeoJSON на карту
+                    var geoObjects = ymaps.geoQuery(geojsonData);
+                    geoObjects.addToMap(map);
                 })
                 .catch(error => console.error("Ошибка загрузки GeoJSON:", error));
         }
