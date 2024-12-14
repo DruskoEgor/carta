@@ -44,9 +44,8 @@
         }
 
         #map {
-            width: 100%; /* Устанавливаем карту на 100% ширины контейнера */
-            height: 500px; /* Устанавливаем карту на 500px высоты */
-            background-color: #f0f0f0; /* Чтобы визуально видеть контейнер */
+            width: 100%;
+            height: 500px;
         }
 
         .content {
@@ -143,10 +142,10 @@
 
         <!-- Контейнер для карты -->
         <div class="map-container">
-            <!-- Контейнер для карты (ID используется в ссылке конструктора) -->
             <div id="map"></div>
         </div>
 
+        <!-- Текстовый контент -->
         <div class="content">
             <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
             <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта выгоднее для вашего региона.</p>
@@ -219,7 +218,15 @@
         </div>
     </div>
 
-    <!-- Подключение карты из Яндекс Конструктора -->
+    <!-- Подключение карты -->
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var map = new ymaps.Map("map", {
+                center: [55.751244, 37.618423], // Центр Москвы
+                zoom: 10 // Масштаб
+            });
+        });
+    </script>
     <script type="text/javascript" charset="utf-8" src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Af98e2f99a8e40e1877f32b49a0030c9c2bb04491909b8d9ea3e4fc62fa7b3f71&amp;id=mymap&amp;lang=ru_RU&amp;apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b"></script>
 </body>
 </html>
