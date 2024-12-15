@@ -36,10 +36,9 @@ REGION_ORDER = [
 
 def fetch_electric_data():
     options = Options()
-    options.add_argument('--no-sandbox')  # Необходимо для CI/CD
-    options.add_argument('--disable-dev-shm-usage')  # Помогает в контейнерах
+    options.add_argument('--no-sandbox')  
+    options.add_argument('--disable-dev-shm-usage')  
 
-    # Указываем путь к ChromeDriver
     service = Service('/usr/local/bin/chromedriver')
 
     # Инициализация драйвера с настройками
