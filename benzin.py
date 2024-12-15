@@ -42,15 +42,14 @@ REGION_ORDER = [
 def get_latest_benzin_data(existing_data):
     latest_prices = {region['id']: region for region in existing_data}
     options = Options()
-    options.add_argument('--headless')  # Запуск в безголовом режиме
-    options.add_argument('--no-sandbox')  # Необходимо для CI/CD
-    options.add_argument('--disable-dev-shm-usage')  # Для работы в ограниченных контейнерах
-    options.add_argument('--disable-gpu')  # Еще одна опция для headless
+    options.add_argument('--headless') 
+    options.add_argument('--no-sandbox')  
+    options.add_argument('--disable-dev-shm-usage') 
+    options.add_argument('--disable-gpu')  
 
-    # Указываем путь к ChromeDriver
     service = Service('/usr/local/bin/chromedriver')
 
-    # Инициализация драйвера с настройками
+    # Инициализация драйвера 
     driver = webdriver.Chrome(service=service, options=options)
     try:
         driver.get("https://www.benzin-price.ru/account.php")
