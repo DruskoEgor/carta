@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цены на топливо и электроэнергию</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <h1>ЭЛЕКТРОМОБИЛИ VS АВТОМОБИЛИ</h1>
+
+        <div class="content">
+            <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
+            <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта выгоднее для вашего региона.</p>
+        </div>
+    </div>
+</body>
+</html>
