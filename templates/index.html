@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Цены на топливо и электроэнергию</title>
     <style>
@@ -10,7 +9,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #121212; 
+            background-color: #121212;
             color: #f0f0f0;
             display: flex;
             flex-direction: column;
@@ -20,14 +19,13 @@
         .container {
             width: 90%;
             max-width: 1200px;
-            margin-bottom: 50px;
+            margin: 20px auto;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
         h1 {
-            margin-top: 20px;
             font-size: 28px;
             font-weight: bold;
             color: #ffffff;
@@ -37,16 +35,17 @@
         .map-container {
             width: 100%;
             height: 500px;
-            margin-top: 30px;
+            margin: 20px 0;
             background-color: #1c1c1c;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
         }
 
         #map {
             width: 100%;
-            height: 500px; 
-            background-color: #f0f0f0; 
+            height: 100%;
+        }
 
         .content {
             margin-bottom: 30px;
@@ -60,21 +59,19 @@
         }
 
         .table-container {
-            width: 300px;
-            height: 300px;
+            width: 100%;
             overflow: hidden;
+            max-height: 0;
             background-color: #1c1c1c;
             border-radius: 10px;
-            transition: all 0.4s ease;
-            cursor: pointer;
-            margin: 0 auto 20px auto;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            transition: max-height 0.5s ease, padding 0.5s ease;
         }
 
-        .table-container:hover {
-            width: 80%;
-            height: 400px;
-            overflow: auto;
-            padding: 20px;
+        .table-container.open {
+            max-height: 500px;
+            padding: 10px;
         }
 
         table {
@@ -82,11 +79,11 @@
             border-collapse: collapse;
             background-color: #222;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         table th, table td {
-            padding: 8px;
+            padding: 10px;
             text-align: center;
             border: 1px solid #333;
             color: #ddd;
@@ -98,27 +95,13 @@
             font-weight: bold;
         }
 
-        table td {
-            background-color: #1c1c1c;
-        }
-
         table tr:nth-child(even) td {
             background-color: #2b2b2b;
         }
 
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 50px;
-        }
-
-        .btn-group form {
-            margin: 10px 0;
-        }
-
-        .btn-group button {
+        .toggle-button {
             padding: 10px 20px;
+            margin-bottom: 10px;
             font-size: 14px;
             color: #fff;
             background-color: #007bff;
@@ -126,26 +109,21 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .btn-group button:hover {
+        .toggle-button:hover {
             background-color: #0056b3;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Заголовок -->
-        <h1>"ЭКОЛОГИЧЕСКИЙ НАВИГАТОР"</h1>
+        <h1>ЭКОЛОГИЧЕСКИЙ НАВИГАТОР</h1>
 
         <!-- Контейнер для карты -->
         <div class="map-container">
-            <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: #fff; display: none;">
-                Загрузка карты...
-            </div>
-            <div id="map"></div> <!-- Карта здесь -->
+            <div id="map"></div>
         </div>
 
         <div class="content">
@@ -153,8 +131,9 @@
             <p>На этой странице вы можете сравнить актуальные цены на бензин и электричество, чтобы понять, какой вид транспорта выгоднее для вашего региона.</p>
         </div>
 
-        <!-- Таблица -->
-        <div class="table-container">
+        <!-- Первая таблица -->
+        <button class="toggle-button" onclick="toggleTable('table1')">Показать/Скрыть таблицу 1</button>
+        <div class="table-container" id="table1">
             <table>
                 <thead>
                     <tr>
@@ -181,8 +160,9 @@
             </table>
         </div>
 
-        <!-- Таблица -->
-        <div class="table-container">
+        <!-- Вторая таблица -->
+        <button class="toggle-button" onclick="toggleTable('table2')">Показать/Скрыть таблицу 2</button>
+        <div class="table-container" id="table2">
             <table>
                 <thead>
                     <tr>
@@ -206,20 +186,7 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Кнопки под таблицей -->
-        <div class="btn-group">
-            <form action="{{ url_for('run_parser') }}" method="post">
-                <input type="hidden" name="parser_type" value="benzin">
-                <button type="submit">Запустить парсер бензина (GitHub Actions)</button>
-            </form>
-            <form action="{{ url_for('run_parser') }}" method="post">
-                <input type="hidden" name="parser_type" value="electricity">
-                <button type="submit">Запустить парсер электричества (GitHub Actions)</button>
-            </form>
-        </div>
     </div>
-
     <!--  скрипт  API  -->
     <script src="https://api-maps.yandex.ru/2.1/?apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b&lang=ru_RU" type="text/javascript"></script>
     <script>
