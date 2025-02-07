@@ -60,11 +60,18 @@
 
         .table-container {
             width: 100%;
-            overflow: auto;
+            overflow: hidden;
+            max-height: 0;
             background-color: #1c1c1c;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            transition: max-height 0.5s ease, padding 0.5s ease;
+        }
+
+        .table-container.open {
+            max-height: 500px;
+            padding: 10px;
         }
 
         table {
@@ -91,6 +98,22 @@
         table tr:nth-child(even) td {
             background-color: #2b2b2b;
         }
+
+        .toggle-button {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -109,7 +132,8 @@
         </div>
 
         <!-- Первая таблица -->
-        <div class="table-container">
+        <button class="toggle-button" onclick="toggleTable('table1')">Показать/Скрыть таблицу 1</button>
+        <div class="table-container" id="table1">
             <table>
                 <thead>
                     <tr>
@@ -137,7 +161,8 @@
         </div>
 
         <!-- Вторая таблица -->
-        <div class="table-container">
+        <button class="toggle-button" onclick="toggleTable('table2')">Показать/Скрыть таблицу 2</button>
+        <div class="table-container" id="table2">
             <table>
                 <thead>
                     <tr>
@@ -162,26 +187,57 @@
             </table>
         </div>
     </div>
-
-    <!-- Скрипт API Яндекс.Карт -->
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <!--  скрипт  API  -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=7feab22e-2e07-462f-ae45-ad4fb5e4714b&lang=ru_RU" type="text/javascript"></script>
     <script>
         ymaps.ready(init);
+
         function init() {
+            // индикатор загрузки
+            document.getElementById('loading').style.display = 'block';
+
             var map = new ymaps.Map("map", {
-                center: [61.735644, 99.466732],
-                zoom: 3,
-                controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+                center: [61.735644, 99.466732], 
+                zoom: 3, 
+                controls: ['zoomControl', 'typeSelector', 'fullscreenControl'] // Контролы 
             });
 
-            // Пример добавления точек на карту
-            {% for point in points %}
-            var placemark = new ymaps.Placemark([{{ point.lat }}, {{ point.lng }}], {
-                hintContent: '{{ point.hint }}',
-                balloonContent: '{{ point.balloon }}'
-            });
-            map.geoObjects.add(placemark);
-            {% endfor %}
+            map.setType('yandex#map');
+
+            //  GeoJSON файл
+            fetch('{{ url_for("static", filename="maps/map_data.geojson") }}')
+                .then(response => response.json())
+                .then(geojsonData => {
+                    // Обработка файлов
+                    geojsonData.features.forEach(function (feature) {
+                        var geoObject = new ymaps.GeoObject({
+                            geometry: feature.geometry, // Геометрия  GeoJSON
+                            properties: feature.properties // Свойства 
+                        }, {
+                            fillColor: feature.properties.fill, 
+                            fillOpacity: feature.properties['fill-opacity'], 
+                            strokeColor: feature.properties.stroke, 
+                            strokeWidth: feature.properties['stroke-width'], 
+                            strokeOpacity: feature.properties['stroke-opacity'] 
+                        });
+
+                        // geoObject на карту
+                        map.geoObjects.add(geoObject);
+                    });
+
+                    // Скрытие индикатора загрузки после загрузки данных
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error("Ошибка загрузки GeoJSON:", error);
+                    // Скрытие индикатора загрузки при ошибке
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
+
+        function toggleTable(tableId) {
+            const table = document.getElementById(tableId);
+            table.classList.toggle('open');
         }
     </script>
 </body>
