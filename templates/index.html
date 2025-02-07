@@ -34,6 +34,21 @@
             text-align: center;
         }
 
+        .map-container {
+            width: 100%;
+            height: 500px;
+            margin-top: 30px;
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        #map {
+            width: 100%;
+            height: 500px; 
+            background-color: #f0f0f0; 
+        }
+
         .content {
             margin-bottom: 30px;
             text-align: center;
@@ -87,7 +102,15 @@
 <body>
     <div class="container">
         <!-- Заголовок -->
-        <h1>"ЭКОЛОГИЧЕСКИЙ НАВИГАТОР"</h1>
+        <h1>\"ЭКОЛОГИЧЕСКИЙ НАВИГАТОР\"</h1>
+
+        <!-- Контейнер для карты -->
+        <div class="map-container">
+            <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: #fff; display: none;">
+                Загрузка карты...
+            </div>
+            <div id="map"></div> <!-- Карта здесь -->
+        </div>
 
         <div class="content">
             <p>Электромобили становятся всё более популярными благодаря их экологичности и экономичности.</p>
